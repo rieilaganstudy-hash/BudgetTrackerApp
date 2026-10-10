@@ -70,14 +70,13 @@ class BudgetTrackerViewModel(
     }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), BudgetTrackerUiState())
 
     companion object {
-        val Factory = object : ViewModelProvider.Factory {
-            @Suppress("UNCHECKED_CAST")
-            override fun <T : ViewModel> create(modelClass: Class<T>): T {
-                return androidx.lifecycle.ViewModelProvider.AndroidViewModelFactory
-                    .getInstance(androidx.compose.ui.platform.LocalContext.current.applicationContext as Application)
-                    .create(modelClass)
+        fun provideFactory(application: Application): ViewModelProvider.Factory =
+            object : ViewModelProvider.Factory {
+                @Suppress("UNCHECKED_CAST")
+                override fun <T : ViewModel> create(modelClass: Class<T>): T {
+                    return BudgetTrackerViewModel(application) as T
+                }
             }
-        }
     }
 
     init {
