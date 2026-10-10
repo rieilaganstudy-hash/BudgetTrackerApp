@@ -4,10 +4,10 @@ import android.app.Application
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
-import androidx.lifecycle.viewmodel.compose.viewModel
 import com.budgettracker.app.data.database.BudgetTrackerDatabase
 import com.budgettracker.app.data.model.GroceryExpense
 import com.budgettracker.app.data.repository.BudgetRepository
+import com.budgettracker.app.data.repository.BudgetStatus
 import com.budgettracker.app.data.repository.GroceryCategories
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -42,7 +42,17 @@ class BudgetTrackerViewModel(
         _selectedCategory,
         repository.getExpensesForMonth(_currentMonth.value),
         repository.getRemainingBudgetForMonth(_currentMonth.value)
-    ) { month, budgetText, name, amount, date, description, category, expenses, budgetStatus ->
+    ) { values ->
+        val month = values[0] as YearMonth
+        val budgetText = values[1] as String
+        val name = values[2] as String
+        val amount = values[3] as String
+        val date = values[4] as String
+        val description = values[5] as String
+        val category = values[6] as String
+        val expenses = values[7] as List<GroceryExpense>
+        val budgetStatus = values[8] as BudgetStatus
+
         BudgetTrackerUiState(
             currentMonth = month,
             budgetText = budgetText,
@@ -63,10 +73,9 @@ class BudgetTrackerViewModel(
         val Factory = object : ViewModelProvider.Factory {
             @Suppress("UNCHECKED_CAST")
             override fun <T : ViewModel> create(modelClass: Class<T>): T {
-                val app = androidx.lifecycle.ViewModelProvider.AndroidViewModelFactory.getInstance(
-                    androidx.compose.ui.platform.LocalContext.current.applicationContext as android.app.Application
-                )
-                return app.create(modelClass) as T
+                return androidx.lifecycle.ViewModelProvider.AndroidViewModelFactory
+                    .getInstance(androidx.compose.ui.platform.LocalContext.current.applicationContext as Application)
+                    .create(modelClass)
             }
         }
     }
