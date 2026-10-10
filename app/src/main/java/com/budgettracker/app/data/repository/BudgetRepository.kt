@@ -2,6 +2,7 @@ package com.budgettracker.app.data.repository
 
 import com.budgettracker.app.data.dao.GroceryExpenseDao
 import com.budgettracker.app.data.dao.MonthlyBudgetDao
+import com.budgettracker.app.data.dao.CategoryExpenseSummary
 import com.budgettracker.app.data.model.GroceryExpense
 import com.budgettracker.app.data.model.MonthlyBudget
 import kotlinx.coroutines.flow.Flow
