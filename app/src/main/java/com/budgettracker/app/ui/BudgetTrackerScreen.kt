@@ -1,17 +1,15 @@
 package com.budgettracker.app.ui
 
+import android.app.Application
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -29,7 +27,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -44,18 +41,20 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.budgettracker.app.data.database.BudgetTrackerDatabase
 import com.budgettracker.app.data.model.GroceryExpense
-import com.budgettracker.app.data.repository.BudgetRepository
 import com.budgettracker.app.data.repository.GroceryCategories
+import com.budgettracker.app.viewmodel.BudgetTrackerUiState
 import com.budgettracker.app.viewmodel.BudgetTrackerViewModel
-import java.time.LocalDate
 import java.time.YearMonth
 import java.util.Locale
 
 @Composable
 fun BudgetTrackerScreen(
-    viewModel: BudgetTrackerViewModel = viewModel(factory = BudgetTrackerViewModel.Factory)
+    viewModel: BudgetTrackerViewModel = viewModel(
+        factory = BudgetTrackerViewModel.factory(
+            LocalContext.current.applicationContext as Application
+        )
+    )
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
@@ -174,6 +173,7 @@ private fun InputForm(
                 verticalArrangement = Arrangement.spacedBy(12.dp)
             ) {
                 Text(text = "Monthly budget", fontWeight = FontWeight.Bold, fontSize = 18.sp)
+
                 Row(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.spacedBy(8.dp),
@@ -187,6 +187,7 @@ private fun InputForm(
                         singleLine = true,
                         label = { Text("Budget amount") }
                     )
+
                     Button(onClick = onSaveBudget) {
                         Text("Save")
                     }
@@ -326,6 +327,7 @@ private fun ExpenseList(
                                     Text(expense.description, fontSize = 12.sp, color = Color.DarkGray)
                                 }
                             }
+
                             Row(verticalAlignment = Alignment.CenterVertically) {
                                 Text(
                                     text = formatCurrency(expense.amount),
@@ -345,5 +347,10 @@ private fun ExpenseList(
 }
 
 private fun formatCurrency(value: Double): String {
-    return "${Locale.getDefault().currency?.symbol ?: "$"}${String.format(Locale.getDefault(), "%.2f", value)}"
+    val symbol = try {
+        Locale.getDefault().currency?.symbol ?: "$"
+    } catch (e: Exception) {
+        "$"
+    }
+    return "$symbol${String.format(Locale.getDefault(), "%.2f", value)}"
 }
