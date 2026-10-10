@@ -46,12 +46,13 @@ import com.budgettracker.app.data.repository.GroceryCategories
 import com.budgettracker.app.viewmodel.BudgetTrackerUiState
 import com.budgettracker.app.viewmodel.BudgetTrackerViewModel
 import java.time.YearMonth
+import java.util.Currency
 import java.util.Locale
 
 @Composable
 fun BudgetTrackerScreen(
     viewModel: BudgetTrackerViewModel = viewModel(
-        factory = BudgetTrackerViewModel.factory(
+        factory = BudgetTrackerViewModel.provideFactory(
             LocalContext.current.applicationContext as Application
         )
     )
@@ -348,7 +349,7 @@ private fun ExpenseList(
 
 private fun formatCurrency(value: Double): String {
     val symbol = try {
-        Locale.getDefault().currency?.symbol ?: "$"
+        Currency.getInstance(Locale.getDefault()).symbol
     } catch (e: Exception) {
         "$"
     }
