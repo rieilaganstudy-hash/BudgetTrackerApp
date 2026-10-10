@@ -47,10 +47,6 @@ class BudgetRepository(
         return groceryExpenseDao.getTotalSpendingForMonth(yearMonth.toString())
     }
 
-    fun getExpensesByCategory(yearMonth: YearMonth): Flow<List<CategoryExpenseSummary>> {
-        return groceryExpenseDao.getExpensesByCategoryForMonth(yearMonth.toString())
-    }
-
     suspend fun deleteExpensesForMonth(yearMonth: YearMonth) {
         groceryExpenseDao.deleteExpensesByMonth(yearMonth.toString())
     }
